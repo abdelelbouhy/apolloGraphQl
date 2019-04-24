@@ -11,15 +11,9 @@ const getNext = () => {
 
 const GET_USER = gql`
   query($id: Int!) {
-       user (id: $id){
+       userGet (id: $id){
         age
         username
-        country
-       address{
-          house
-          street
-          road
-        }
       }
   }
 `
@@ -41,24 +35,24 @@ class User extends PureComponent {
     render() {
         console.log(this.props);
 
-        const { user, onLoadMore, loading } =  this.props.getUser;
+        const { userGet, onLoadMore, loading } =  this.props.getUser;
 
         if(loading) {
             return <div>Loading</div>
         }
 
-        if (user) {
+        if (userGet) {
             return (
                 <div>
                     <div onClick={this.getNext}>get next user</div>
                     <div onClick={this.getPrev}>get prev user</div>
                     <div>
-                        <div>{user.username}</div>
-                        <div>{user.age}</div>
-                        <div>{user.country}</div>
-                        <div>{user.address.street}</div>
-                        <div>{user.address.house}</div>
-                        <div>{user.address.road}</div>
+                        <div>{userGet[0].username}</div>
+                        <div>{userGet[0].age}</div>
+                        {/*<div>{user.country}</div>*/}
+                        {/*<div>{user.address.street}</div>*/}
+                        {/*<div>{user.address.house}</div>*/}
+                        {/*<div>{user.address.road}</div>*/}
                     </div>
                 </div>
             );
