@@ -28,6 +28,7 @@
     "dotenv": "^7.0.0",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
+    "express-graphql": "^0.8.0",
     "express-promise-router": "^3.0.2",
     "fetch": "^1.1.0",
     "graphql": "^14.2.0",
@@ -47,7 +48,7 @@
     "redux": "^4.0.0",
     "save-dev": "^2.0.0",
     "sequelize": "^5.3.1",
-    "sequelize-graphql-schema": "^0.1.64",
+    "sequelize-graphql-schema": "^0.1.66",
     "tedious": "^6.1.0"
   },
   "devDependencies": {

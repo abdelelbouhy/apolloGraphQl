@@ -1,23 +1,28 @@
 import express from 'express';
 import path from 'path';
 import { ApolloServer, gql } from 'apollo-server-express';
-import { mergeTypes } from 'merge-graphql-schemas';
-import { merge } from "lodash";
+import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
 import models, {sequelize} from '../models';
+const {generateSchema} = require('sequelize-graphql-schema')({});
+const { GraphQLSchema } = require('graphql');
+const graphqlHTTP = require('express-graphql');
 const app = express();
+
+import user from '../models/user';
+
+// console.log(new GraphQLSchema(generateSchema(models)))
+
 
 
 const userSchema = gql`
   type Query {
     user(id: Int!): User
     users: [User!]
-    me: User
     addresses: [Address]
   }
 
   type User {
     username: String!
-    country: String!
     age: Int!
     addresses: [Address]
   }
@@ -27,10 +32,7 @@ const userSchema = gql`
       username: String!
       age: Int!
     ): ID!
-  }
-
-  type Token {
-    token: String!
+    deleteUser(id: ID!): Boolean!
   }
 `;
 
@@ -41,7 +43,6 @@ const addressSchema = gql`
 
   type Address {
     street: String!
-    house: String!
     road: String!
     user: User!
   }
@@ -54,16 +55,13 @@ const addressSchema = gql`
 
 const schema = mergeTypes([userSchema, addressSchema], { all: true });
 
-const uerResolver = {
+const userResolver = {
     Query: {
         users: async (parent, args, { models }) => {
             return await models.User.findAll();
         },
         user: async (parent, { id }, { models }) => {
             return await models.User.findByPk(id);
-        },
-        me: async (parent, args, { models, me }) => {
-            return await models.User.findByPk(me.id);
         },
     },
 
@@ -78,7 +76,7 @@ const uerResolver = {
     },
 
     Mutation: {
-        createUser: async (parent, { username, age }, { me, models }) => {
+        createUser: async (parent, { username, age }, { models }) => {
             return await models.User.create({
                 username,
                 age,
@@ -106,10 +104,10 @@ const addressResolver = {
     },
 
     Mutation: {
-        createAddress: async (parent, { text }, { me, models }) => {
+        createAddress: async (parent, { text }, { user, models }) => {
             return await models.Address.create({
                 text,
-                userId: me.id,
+                userId: user.id,
             });
         },
 
@@ -125,15 +123,15 @@ const addressResolver = {
     },
 };
 
-const resolvers = merge({}, uerResolver, addressResolver);
+const resolvers = mergeResolvers([userResolver, addressResolver]);
 
-const server = new ApolloServer({
-    typeDefs: schema,
-    resolvers,
-    context: { // connect sequelize to schema
-        models,
-    },
-});
+// const server = new ApolloServer({
+//     typeDefs: schema,
+//     resolvers,
+//     context: { // connect sequelize to schema
+//         models,
+//     },
+// });
 
 const createUsersWithAddresss = async () => {
     await models.User.create(
@@ -170,7 +168,15 @@ const createUsersWithAddresss = async () => {
     );
 };
 
-server.applyMiddleware({ app, path: '/graphql' });
+app.use(
+    '/graphql',
+    graphqlHTTP({
+        schema: new GraphQLSchema(generateSchema(models)),
+        graphiql: true
+    })
+)
+
+// server.applyMiddleware({ app, path: '/graphql' });
 app
     .set('view engine', 'ejs')
     .set('views', path.resolve(__dirname, '../views'))
@@ -191,3 +197,9 @@ sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
 app.get('/*', (req, res)=> {
     res.render('index')
 });
+
+
+
+// app.listen(8080, function() {
+//     console.log('RUNNING ON 8080. Graphiql http://localhost:8080/graphql')
+// })

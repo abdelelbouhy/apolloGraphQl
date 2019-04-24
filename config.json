@@ -1,0 +1,10 @@
+{
+  "test": {
+    "storage": "tests/database.db",
+    "dialect": "mssql"
+  },
+  "development": {
+    "storage": "tests/database.db",
+    "dialect": "mssql"
+  }
+}
