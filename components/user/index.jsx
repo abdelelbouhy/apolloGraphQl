@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { gql } from 'apollo-boost';
-import { Query, graphql } from 'react-apollo';
+import { Query, graphql, Mutation} from 'react-apollo';
 
 let counter = 1;
 
@@ -11,11 +11,22 @@ const getNext = () => {
 
 const GET_USER = gql`
   query($id: Int!) {
-       userGet (id: $id){
+       getUser (id: $id){
         age
         username
+         Addresses {
+            street
+         }
       }
   }
+`
+const CREATE_USER = gql`
+ mutation {
+  addUser(User: {username:"user 700", age: 700}) {
+    username
+  }
+}
+
 `
 
 class User extends PureComponent {
@@ -32,24 +43,35 @@ class User extends PureComponent {
         this.props.getUser.refetch({id: counter});
     };
 
+    createUser = () => {
+
+    }
+
     render() {
         console.log(this.props);
 
-        const { userGet, onLoadMore, loading } =  this.props.getUser;
+        const { getUser, onLoadMore, loading } =  this.props.getUser;
 
         if(loading) {
             return <div>Loading</div>
         }
 
-        if (userGet) {
+        if (getUser) {
             return (
                 <div>
                     <div onClick={this.getNext}>get next user</div>
                     <div onClick={this.getPrev}>get prev user</div>
+                    <Mutation mutation={CREATE_USER}>
+                        {(userAdd, { data }) => (
+
+                            <div onClick={userAdd}>create new user</div>
+                        )}
+
+                    </Mutation>
                     <div>
-                        <div>{userGet[0].username}</div>
-                        <div>{userGet[0].age}</div>
-                        {/*<div>{user.country}</div>*/}
+                        <div>{getUser[0].username}</div>
+                        <div>{getUser[0].age}</div>
+                        <div>{getUser[0].Addresses[0].street}</div>
                         {/*<div>{user.address.street}</div>*/}
                         {/*<div>{user.address.house}</div>*/}
                         {/*<div>{user.address.road}</div>*/}

@@ -1,42 +1,18 @@
-// import Sequelize from 'sequelize';
-//
-// const sequelize = new Sequelize(
-//     process.env.DATABASE,
-//     process.env.DATABASE_USER,
-//     process.env.DATABASE_PASSWORD,
-//     {
-//         dialect: 'mssql',
-//     },
-// );
-//
-// const models = {
-//     User: sequelize.import('./user'),
-//     Address: sequelize.import('./address'),
-// };
-//
-// Object.keys(models).forEach(key => {
-//     if ('associate' in models[key]) {
-//         models[key].associate(models);
-//     }
-// });
-//
-// export { sequelize };
-//
-// export default models;
+import Sequelize from 'sequelize';
+import path from 'path';
+import fs from 'fs';
 
-'use strict'
+const basename = path.basename(module.filename);
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config.json')[env];
+const db = {};
 
-var fs = require('fs')
-var path = require('path')
-var Sequelize = require('sequelize')
-var basename = path.basename(module.filename)
-var env = process.env.NODE_ENV || 'development'
-var config = require(__dirname + '/../config.json')[env]
-var db = {}
+let sequelize;
+
 if (config.use_env_variable) {
-    var sequelize = new Sequelize(process.env[config.use_env_variable])
+     sequelize = new Sequelize(process.env[config.use_env_variable])
 } else {
-    var sequelize = new Sequelize(
+     sequelize = new Sequelize(
         process.env.DATABASE,
         process.env.DATABASE_USER,
         process.env.DATABASE_PASSWORD,
@@ -54,17 +30,18 @@ fs
             file.slice(-3) === '.js'
     })
     .forEach(function (file) {
-        var model = sequelize['import'](path.join(__dirname, file))
+        var model = sequelize.import(path.join(__dirname, file))
         db[model.name] = model
-    })
+    });
 
 Object.keys(db).forEach(function (modelName) {
     if (db[modelName].associate) {
         db[modelName].associate(db)
     }
-})
+});
 
-db.sequelize = sequelize
-db.Sequelize = Sequelize
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-module.exports = db
+export { sequelize };
+export default db;

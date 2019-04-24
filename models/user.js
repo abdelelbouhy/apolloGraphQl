@@ -12,6 +12,13 @@ const user = (sequelize, DataTypes) => {
         User.hasMany(models.Address);
     };
 
+    User.graphql = {
+        alias: {
+            fetch: 'getUser' ,
+            create: 'addUser'
+        },
+    }
+
 
     return User;
 };
