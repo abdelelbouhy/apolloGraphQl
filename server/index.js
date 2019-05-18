@@ -3,7 +3,7 @@ import path from 'path';
 import { ApolloServer, gql } from 'apollo-server-express';
 import { mergeTypes } from 'merge-graphql-schemas';
 import { merge } from "lodash";
-import models, {sequelize} from '../models';
+// import models, {sequelize} from '../models';
 const app = express();
 
 
@@ -125,14 +125,14 @@ const addressResolver = {
     },
 };
 
-const resolvers = merge({}, uerResolver, addressResolver);
+// const resolvers = merge({}, uerResolver, addressResolver);
 
 const server = new ApolloServer({
     typeDefs: schema,
-    resolvers,
-    context: { // connect sequelize to schema
-        models,
-    },
+    uerResolver,
+    // context: { // connect sequelize to schema
+    //     models,
+    // },
 });
 
 const createUsersWithAddresss = async () => {
@@ -176,17 +176,21 @@ app
     .set('views', path.resolve(__dirname, '../views'))
     .use('/dist', express.static(path.resolve(__dirname, '../dist/')));
 
-const eraseDatabaseOnSync = false;
-
-sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
-    if (eraseDatabaseOnSync) {
-        createUsersWithAddresss();
-    }
-
-    app.listen({ port: 8000 }, () => {
-        console.log('Apollo Server on http://localhost:8000/graphql');
-    });
+app.listen({ port: 80 }, () => {
+    console.log('Apollo Server on http://localhost:8000/graphql');
 });
+
+// const eraseDatabaseOnSync = false;
+
+// sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
+//     if (eraseDatabaseOnSync) {
+//         createUsersWithAddresss();
+//     }
+//
+//     app.listen({ port: 8000 }, () => {
+//         console.log('Apollo Server on http://localhost:8000/graphql');
+//     });
+// });
 
 app.get('/*', (req, res)=> {
     res.render('index')
