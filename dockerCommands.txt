@@ -1,0 +1,16 @@
+docker --version
+docker info
+docker run imageName
+docker image ls // list all images
+docker container ls --all // list all containers
+docker ps // list running containers
+docker ps -l // latest created container
+docker ps -n=-1 //n last created containers
+docker ps -s // total file size
+docker build --tag=friendlyhello .
+docker run -p 4000:80 friendlyhello
+docker run -d -p 4000:80 friendlyhello // run the app in the background, in detached mode
+docker container stop 1fa4ab2cf395
+docker login
+docker tag imageName abdelelbouhy/test:firstTag //docker tag friendlyhello abdelelbouhy/test:part2
+docker push abdelelbouhy/test:firstTag

@@ -18,7 +18,7 @@ const store = createStore(
 );
 
 const history = syncHistoryWithStore(browserHistory, store);
-const client = new ApolloClient({ uri: 'http://localhost:8000/graphql' });
+const client = new ApolloClient({ uri: 'http://localhost:4000/graphql' });
 
 const ApolloApp = () => <ApolloProvider client={client}>
     <Provider store={store}>

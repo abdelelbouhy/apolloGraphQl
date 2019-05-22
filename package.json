@@ -10,7 +10,7 @@
     "start-dev": "npm run start-dev-client && npm run start-server",
     "start-dev-client": "webpack-dev-server --inline",
     "start-server": "nodemon server.js",
-    "start": "npm i && npm run test && npm run build && npm run start-server"
+    "start": "npm i && npm run build && npm run start-server"
   },
   "author": "",
   "license": "ISC",

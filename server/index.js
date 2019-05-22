@@ -129,7 +129,7 @@ const addressResolver = {
 
 const server = new ApolloServer({
     typeDefs: schema,
-    uerResolver,
+    resolvers: uerResolver,
     // context: { // connect sequelize to schema
     //     models,
     // },
